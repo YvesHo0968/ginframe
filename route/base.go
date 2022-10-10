@@ -1,13 +1,12 @@
-package ginFrame
+package route
 
 import (
 	"ginFrame/controller"
+	"ginFrame/middleWare"
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Server) SetRoute() {
-	r := s.ginServer
-
+func SetRoute(r *gin.Engine) {
 	//r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 	//
 	//	// 你的自定义格式
@@ -34,8 +33,14 @@ func (s *Server) SetRoute() {
 	// 设置不存在的路由
 	r.NoRoute(controller.NoResponse)
 
+	// 设置位置调用方式
+	r.NoMethod(controller.NoMethod)
+
 	// 中间件
 	//r.Use(middleWare.MyTime)
+
+	// 跨域
+	r.Use(middleWare.Cors())
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{

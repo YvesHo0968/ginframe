@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var Redis *redis.Client
+var Rdb *redis.Client
 
 func printRedisPool(stats *redis.PoolStats) {
 	fmt.Printf("Hits=%d Misses=%d Timeouts=%d TotalConns=%d IdleConns=%d StaleConns=%d\n",
@@ -33,14 +33,13 @@ func printRedisOption(opt *redis.Options) {
 	fmt.Printf("IdleTimeout=%v\n", opt.IdleTimeout)
 	fmt.Printf("IdleCheckFrequency=%v\n", opt.IdleCheckFrequency)
 	fmt.Printf("TLSConfig=%v\n", opt.TLSConfig)
-
 }
 
-func InitRedis() *redis.Client {
+func InitRedis() {
 	num := runtime.NumCPU()
 	fmt.Println("cpu num = ", 4*num)
 
-	GClient := redis.NewClient(&redis.Options{
+	Rdb = redis.NewClient(&redis.Options{
 		//连接信息
 		Network:  "tcp",            //网络类型，tcp or unix，默认tcp
 		Addr:     "127.0.0.1:6379", //主机名+冒号+端口，默认localhost:6379
@@ -82,18 +81,17 @@ func InitRedis() *redis.Client {
 			return nil
 		},
 	})
-	defer GClient.Close()
+	//defer GClient.Close()
 
 	//err := GClient.Set("key1111", "value", 0).Err()
 	//if err != nil {
 	//	panic(err)
 	//}
 
-	printRedisOption(GClient.Options())
-	printRedisPool(GClient.PoolStats())
-	Redis = GClient
+	printRedisOption(Rdb.Options())
+	printRedisPool(Rdb.PoolStats())
 
-	Redis.Set("key121212", "value", 0).Err()
+	//Rdb.Set("key121212", "value", 0).Err()
 
-	return GClient
+	return
 }

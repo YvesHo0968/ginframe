@@ -14,6 +14,7 @@ func Test(c *gin.Context) {
 		"status":  "posted",
 		"message": message,
 		"nick":    action,
+		"ip":      c.ClientIP(),
 	})
 	//c.String(http.StatusOK, message)
 }

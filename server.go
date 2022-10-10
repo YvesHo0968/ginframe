@@ -1,18 +1,25 @@
 package ginFrame
 
 import (
+	"fmt"
 	"ginFrame/config"
+	"ginFrame/route"
 	"github.com/gin-gonic/gin"
 	"io"
 	"os"
 )
 
+var GServer *Server
+
 type Server struct {
-	ginServer *gin.Engine
+	GinServer *gin.Engine
 }
 
 func New() {
+	// 启动redis
 	config.InitRedis()
+
+	// 设置全局环境
 	gin.SetMode(gin.DebugMode)
 
 	// 禁用控制台颜色
@@ -21,12 +28,18 @@ func New() {
 	f, _ := os.Create("gin.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
-	s := &Server{
-		ginServer: gin.Default(),
+	GServer = &Server{
+		GinServer: gin.Default(),
 	}
 
 	// 设置路由
-	s.SetRoute()
+	route.SetRoute(GServer.GinServer)
+
+	ee := config.Rdb.Set("qwqww12121", "value", 0).Err()
+
+	if ee != nil {
+		fmt.Println("错误")
+	}
 
 	//fmt.Println(dd)
 
@@ -41,7 +54,25 @@ func New() {
 	//}
 	//fmt.Println("key", val)
 
-	s.ginServer.Run(":8080") // listen and serve on 0.0.0.0:8080
+	//GServer.GinServer.Run(":8080") // listen and serve on 0.0.0.0:8080
+	//GServer.GinServer.RunListener()
+
+	//server01 := &http.Server{
+	//	Addr:         ":8080",
+	//	Handler:      GServer.GinServer,
+	//	ReadTimeout:  5 * time.Second,
+	//	WriteTimeout: 10 * time.Second,
+	//}
+	//
+	//server02 := &http.Server{
+	//	Addr:         ":8081",
+	//	Handler:      GServer.GinServer,
+	//	ReadTimeout:  5 * time.Second,
+	//	WriteTimeout: 10 * time.Second,
+	//}
+	//
+	//server01.ListenAndServe()
+	//server02.ListenAndServe()
 
 	return
 }
