@@ -2,6 +2,8 @@ package controller
 
 import (
 	"ginFrame/common"
+	"ginFrame/config"
+	"ginFrame/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -10,11 +12,36 @@ func Test(c *gin.Context) {
 	name := c.DefaultQuery("name", "122")
 	action := c.Query("action")
 	message := name + " is " + action
+
+	//type UserC struct {
+	//	ID      int64  `json:"id" gorm:"PRIMARY_KEY"`         // 列名为 `id`
+	//	Account string `json:"account" gorm:"Column:account"` // 列名为 `account`
+	//}
+
+	type User struct {
+		ID      uint
+		Account string
+		Age     int
+		Gender  string
+		// 假设后面还有几百个字段...
+	}
+
+	type UserD struct {
+		ID      int64  `json:"id" gorm:"PRIMARY_KEY"`         // 列名为 `id`
+		Account string `json:"account" gorm:"Column:account"` // 列名为 `account`
+	}
+
+	var user []UserD
+
+	config.Db.Debug().Model(&model.User{}).Where("id < ?", 3).Find(&user)
+
+	//config.Db.Debug().Table("user").Where("id < ?", 3).Find(&user)
 	c.JSON(200, gin.H{
 		"status":  "posted",
 		"message": message,
 		"nick":    action,
 		"ip":      c.ClientIP(),
+		"user":    user,
 	})
 	//c.String(http.StatusOK, message)
 }

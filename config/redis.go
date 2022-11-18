@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-var Rdb *redis.Client
-
 func printRedisPool(stats *redis.PoolStats) {
 	fmt.Printf("Hits=%d Misses=%d Timeouts=%d TotalConns=%d IdleConns=%d StaleConns=%d\n",
 		stats.Hits, stats.Misses, stats.Timeouts, stats.TotalConns, stats.IdleConns, stats.StaleConns)

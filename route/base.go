@@ -4,6 +4,7 @@ import (
 	"ginFrame/controller"
 	"ginFrame/middleWare"
 	"github.com/gin-gonic/gin"
+	"github.com/thinkerou/favicon"
 )
 
 func SetRoute(r *gin.Engine) {
@@ -29,6 +30,7 @@ func SetRoute(r *gin.Engine) {
 	//
 	//// 使用 Recovery 中间件
 	//r.Use(gin.Recovery())
+	r.Use(favicon.New("./favicon.ico"))
 
 	// 设置不存在的路由
 	r.NoRoute(controller.NoResponse)

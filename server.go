@@ -19,6 +19,9 @@ func New() {
 	// 启动redis
 	config.InitRedis()
 
+	// 启动数据库
+	config.InitDb()
+
 	// 设置全局环境
 	gin.SetMode(gin.DebugMode)
 
@@ -54,7 +57,7 @@ func New() {
 	//}
 	//fmt.Println("key", val)
 
-	//GServer.GinServer.Run(":8080") // listen and serve on 0.0.0.0:8080
+	GServer.GinServer.Run(":8080") // listen and serve on 0.0.0.0:8080
 	//GServer.GinServer.RunListener()
 
 	//server01 := &http.Server{
