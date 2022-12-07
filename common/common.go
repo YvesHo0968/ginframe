@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -19,4 +20,8 @@ func Success(c *gin.Context, data interface{}) {
 	}
 
 	c.JSON(http.StatusOK, d)
+}
+
+func Uuid() string {
+	return uuid.New().String()
 }
