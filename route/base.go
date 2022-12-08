@@ -1,10 +1,12 @@
 package route
 
 import (
+	"ginFrame/common"
 	"ginFrame/controller"
 	"ginFrame/middleWare"
 	"github.com/gin-gonic/gin"
 	"github.com/thinkerou/favicon"
+	"net/http"
 )
 
 func SetRoute(r *gin.Engine) {
@@ -31,6 +33,7 @@ func SetRoute(r *gin.Engine) {
 	//// 使用 Recovery 中间件
 	//r.Use(gin.Recovery())
 	r.Use(favicon.New("./favicon.ico"))
+	//r.StaticFile("/favicon.ico", "./favicon.ico")
 
 	// 设置不存在的路由
 	r.NoRoute(controller.NoResponse)
@@ -46,6 +49,7 @@ func SetRoute(r *gin.Engine) {
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
+			"22":      common.FilePath(),
 			"message": "pong",
 		})
 	})
@@ -57,6 +61,15 @@ func SetRoute(r *gin.Engine) {
 
 	r.GET("/test", controller.Test)
 	r.POST("/login", controller.Login)
+
+	// 加载资源文件
+	r.Static("/static", "./static")
+
+	// 路由重定向
+	r.GET("/redirect", func(context *gin.Context) {
+		// 重定向 301 http.StatusMovedPermanently
+		context.Redirect(http.StatusMovedPermanently, "https://www.bilibili.com")
+	})
 
 	//r.POST("/somePost", posting)
 	//r.PUT("/somePut", putting)
