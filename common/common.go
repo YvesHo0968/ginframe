@@ -6,9 +6,12 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"io"
+	"math"
+	r "math/rand"
 	"net/http"
 	"os"
 	"path"
@@ -19,6 +22,7 @@ import (
 	"time"
 )
 
+// Success gin框架返回成功
 func Success(c *gin.Context, data interface{}) {
 	type SuccessData struct {
 		Code int         `json:"code"`
@@ -117,8 +121,8 @@ func Date(format string, times ...int64) string {
 	return time.Unix(t, 0).Format(format)
 }
 
-// Datetotime 日期转时间戳 Datetotime("2006-01-02 15:04:05", "2022-01-01 11:00:00")
-func Datetotime(format, date string) (int64, error) {
+// DateToTime 日期转时间戳 DateToTime("2006-01-02 15:04:05", "2022-01-01 11:00:00")
+func DateToTime(format, date string) (int64, error) {
 	t, err := time.ParseInLocation(format, date, time.Local)
 	if err != nil {
 		return 0, err
@@ -126,7 +130,7 @@ func Datetotime(format, date string) (int64, error) {
 	return t.Unix(), nil
 }
 
-func Strtotime(str string) int64 {
+func StrToTime(str string) int64 {
 
 	uintToSeconds := map[string]int64{"minute": 60, "hour": 3600, "day": 86400, "week": 604800, "year": ((365 * 86400) + 86400)}
 
@@ -188,10 +192,44 @@ func Md5(str string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+// Md5File 文件MD5
+func Md5File(fileName string) string {
+	file, err := os.Open(fileName)
+	defer file.Close()
+	if err != nil {
+		fmt.Printf("打开文件失败，filename=%v, err=%v", fileName, err)
+		return ""
+	}
+	h := md5.New()
+	_, err = io.Copy(h, file)
+	if err != nil {
+		fmt.Errorf("io.Copy失败，filename=%v, err=%v", fileName, err)
+		return ""
+	}
+	return hex.EncodeToString(h.Sum(nil))
+}
+
 // Sha1 生成sha1字串 sha1("123")
 func Sha1(str string) string {
 	h := sha1.New()
 	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// Sha1File 文件sha1
+func Sha1File(fileName string) string {
+	file, err := os.Open(fileName)
+	defer file.Close()
+	if err != nil {
+		fmt.Errorf("打开文件失败，filename=%v, err=%v", fileName, err)
+		return ""
+	}
+	h := sha1.New()
+	_, err = io.Copy(h, file)
+	if err != nil {
+		fmt.Errorf("io.Copy失败，filename=%v, err=%v", fileName, err)
+		return ""
+	}
 	return hex.EncodeToString(h.Sum(nil))
 }
 
@@ -213,6 +251,46 @@ func Base64Encoded(str string) string {
 // Base64Decode Base64解密 Base64Decode("aGVsbG8=")
 func Base64Decode(str string) string {
 	decode, _ := base64.StdEncoding.DecodeString(str)
-
 	return string(decode)
+}
+
+// StrToLower 字符转小写
+func StrToLower(str string) string {
+	return strings.ToLower(str)
+}
+
+// StrToUpper 字符转大写
+func StrToUpper(str string) string {
+	return strings.ToUpper(str)
+}
+
+// UcWords 单词首字母大写
+func UcWords(str string) string {
+	return strings.Title(str)
+}
+
+// MdStrLen 字符串长度
+func MdStrLen(str string) int {
+	return len([]rune(str))
+}
+
+// Rand 范围随机数
+func Rand(min int, max int) int {
+	r.Seed(time.Now().UnixNano())
+	return r.Intn(max-min+1) + min
+}
+
+// Ceil 向上取整
+func Ceil(num float64) int {
+	return int(math.Ceil(num))
+}
+
+// Floor 向下取整
+func Floor(num float64) int {
+	return int(math.Floor(num))
+}
+
+// Round 四色五人取整
+func Round(num float64) int {
+	return int(math.Round(num))
 }
