@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/go-redis/redis"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 )
 
@@ -13,4 +13,4 @@ var Rdb *redis.Client
 var Db *gorm.DB
 
 // Log 日志
-var Log *logrus.Logger
+var Log zerolog.Logger

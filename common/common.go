@@ -294,3 +294,13 @@ func Floor(num float64) int {
 func Round(num float64) int {
 	return int(math.Round(num))
 }
+
+// Sleep 延迟执行秒数
+func Sleep(seconds int) {
+	time.Sleep(time.Duration(seconds) * time.Second)
+}
+
+// Usleep 延迟执行微秒
+func Usleep(microseconds int) {
+	time.Sleep(time.Duration(microseconds) * time.Microsecond)
+}

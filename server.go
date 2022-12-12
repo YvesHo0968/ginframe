@@ -5,8 +5,6 @@ import (
 	"ginFrame/config"
 	"ginFrame/route"
 	"github.com/gin-gonic/gin"
-	"io"
-	"os"
 )
 
 var GServer *Server
@@ -22,6 +20,9 @@ func New() {
 	// 启动数据库
 	config.InitDb()
 
+	// 启动日志
+	config.InitLog()
+
 	// 设置全局环境
 	gin.SetMode(gin.DebugMode)
 
@@ -29,8 +30,8 @@ func New() {
 	//gin.DisableConsoleColor()
 	// 创建记录日志的文件
 	//f, _ := os.Create("gin.log")
-	f, _ := os.OpenFile("./gin.log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	//f, _ := os.OpenFile("./gin.log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
+	//gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
 	GServer = &Server{
 		GinServer: gin.Default(),
