@@ -23,6 +23,8 @@ func New() {
 	// 启动日志
 	config.InitLog()
 
+	config.Log.Info().Msg("config ini")
+
 	// 设置全局环境
 	gin.SetMode(gin.DebugMode)
 

@@ -37,4 +37,20 @@ func InitLog() {
 	}
 	multi := zerolog.MultiLevelWriter(consoleWriter, logFile)
 	Log = zerolog.New(multi).With().Timestamp().Caller().Logger().Level(zerolog.InfoLevel)
+
+	// 日志采样 每隔多少条输出一次
+	//Log = Log.Sample(&zerolog.BasicSampler{N: 10})
+
+	// 日志采样
+	//Log = Log.Sample(&zerolog.LevelSampler{
+	//	DebugSampler: &zerolog.BurstSampler{
+	//		Burst:       5,
+	//		Period:      time.Second,
+	//		NextSampler: &zerolog.BasicSampler{N: 100},
+	//	},
+	//})
+
+	//for i := 0; i < 20; i++ {
+	//	Log.Info().Msg("will be logged every 10 message")
+	//}
 }

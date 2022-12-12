@@ -65,7 +65,7 @@ func TestRound(t *testing.T) {
 func TestDD(t *testing.T) {
 	config.InitLog()
 
-	log := config.Logger
+	log := config.Log
 
 	log.Info().Str("foo", "bar").Msg("Hello World")
 	log.Error().Str("foo", "bar").Msg("Hello World")

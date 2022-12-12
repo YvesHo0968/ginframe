@@ -47,6 +47,9 @@ func SetRoute(r *gin.Engine) {
 	// 跨域
 	r.Use(middleware.Cors())
 
+	// 日志
+	r.Use(middleware.Logger())
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"22":      common.FilePath(),
