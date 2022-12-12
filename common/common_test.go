@@ -2,7 +2,12 @@ package common
 
 import (
 	"fmt"
+	"ginFrame/config"
+	"github.com/rs/zerolog"
+	"github.com/sirupsen/logrus"
+	"os"
 	"testing"
+	"time"
 )
 
 func TestSha1(t *testing.T) {
@@ -59,4 +64,65 @@ func TestFloor(t *testing.T) {
 
 func TestRound(t *testing.T) {
 	fmt.Println(Round(1.5))
+}
+
+func TestDD(t *testing.T) {
+	config.InitLog()
+
+	log := config.Log
+
+	log.WithFields(logrus.Fields{
+		"status_code": "200",
+	}).Info()
+}
+
+func TestContextual(t *testing.T) {
+	config.Initll()
+
+	config.Logger.Info().
+		Str("website", "xx").
+		Str("account", "account").
+		Msg("开始登录...")
+
+	logg := config.Logger.With().Caller().Str("foo", "bar").Logger()
+	logg.Info().Msg("Hello wrold")
+}
+
+func TestContextualLogger(t *testing.T) {
+	timeFormat := "2006-01-02 15:04:05"
+	zerolog.TimeFieldFormat = timeFormat
+
+	// 创建log目录
+	logDir := "./run_log/"
+	err := os.MkdirAll(logDir, os.ModePerm)
+	if err != nil {
+		fmt.Println("Mkdir failed, err:", err)
+		return
+	}
+
+	fileName := logDir + time.Now().Format("2006-01-02") + ".log"
+	logFile, _ := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
+	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: timeFormat}
+	//consoleWriter.FormatLevel = func(i interface{}) string {
+	//	return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
+	//}
+	//consoleWriter.FormatMessage = func(i interface{}) string {
+	//	return fmt.Sprintf("%s", i)
+	//}
+	//consoleWriter.FormatFieldName = func(i interface{}) string {
+	//	return fmt.Sprintf("%s:", i)
+	//}
+	//consoleWriter.FormatFieldValue = func(i interface{}) string {
+	//	return fmt.Sprintf("%s;", i)
+	//}
+	multi := zerolog.MultiLevelWriter(consoleWriter, logFile)
+
+	fmt.Println(multi)
+	//log := zerolog.New(os.Stdout)
+	log := zerolog.New(multi)
+	log.Info().Str("content", "Hello world").Int("count", 3).Msg("TestContextualLogger")
+
+	// 添加上下文 (文件名/行号/字符串)
+	log = log.With().Timestamp().Caller().Str("foo", "bar").Logger()
+	log.Info().Msg("Hello wrold")
 }

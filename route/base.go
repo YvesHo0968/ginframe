@@ -3,7 +3,7 @@ package route
 import (
 	"ginFrame/common"
 	"ginFrame/controller"
-	"ginFrame/middleWare"
+	"ginFrame/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/thinkerou/favicon"
 	"net/http"
@@ -42,10 +42,10 @@ func SetRoute(r *gin.Engine) {
 	r.NoMethod(controller.NoMethod)
 
 	// 中间件
-	//r.Use(middleWare.MyTime)
+	//r.Use(middleware.MyTime)
 
 	// 跨域
-	r.Use(middleWare.Cors())
+	r.Use(middleware.Cors())
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
