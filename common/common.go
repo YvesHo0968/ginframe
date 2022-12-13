@@ -6,9 +6,11 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/leeqvip/gophp/serialize"
 	"io"
 	"math"
 	r "math/rand"
@@ -332,4 +334,34 @@ func GetArchBit() int {
 // GetCpuCores 获取cpu数
 func GetCpuCores() int {
 	return runtime.GOMAXPROCS(0)
+}
+
+// JsonEncode 结构体转json
+func JsonEncode(data interface{}) string {
+	jsonbyte, err := json.Marshal(data)
+	if err != nil {
+		fmt.Printf("Map转化为byte数组失败,异常:%s\n", err)
+		return ""
+	}
+	return string(jsonbyte)
+}
+
+// JsonDecode json转结构体
+func JsonDecode(data string, val interface{}) error {
+	return json.Unmarshal([]byte(data), val)
+}
+
+// Serialize 结构体转字符
+func Serialize(data interface{}) string {
+	jsonbyte, err := serialize.Marshal(data)
+	if err != nil {
+		fmt.Printf("Map转化为byte数组失败,异常:%s\n", err)
+		return ""
+	}
+	return string(jsonbyte)
+}
+
+// UnSerialize 字符转结构体
+func UnSerialize(str string) (interface{}, error) {
+	return serialize.UnMarshal([]byte(str))
 }
