@@ -5,7 +5,6 @@ import (
 	"ginFrame/controller"
 	"ginFrame/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/thinkerou/favicon"
 	"net/http"
 )
 
@@ -27,13 +26,13 @@ func SetRoute(r *gin.Engine) {
 	//}))
 	//r.Use(gin.Recovery())
 
-	//// 使用 Logger 中间件
+	// 使用 Logger 中间件
 	//r.Use(gin.Logger())
-	//
-	//// 使用 Recovery 中间件
-	//r.Use(gin.Recovery())
-	r.Use(favicon.New("./favicon.ico"))
-	//r.StaticFile("/favicon.ico", "./favicon.ico")
+
+	// 使用 Recovery 中间件
+	r.Use(gin.Recovery())
+	//r.Use(favicon.New("./favicon.ico"))
+	r.StaticFile("/favicon.ico", "./favicon.ico")
 
 	// 设置不存在的路由
 	r.NoRoute(controller.NoResponse)

@@ -12,6 +12,11 @@ func InitLog() {
 	timeFormat := "2006-01-02 15:04:05"
 	zerolog.TimeFieldFormat = timeFormat
 
+	// 设置字段别名
+	//zerolog.TimestampFieldName = "t"
+	//zerolog.LevelFieldName = "l"
+	//zerolog.MessageFieldName = "m"
+
 	// 创建log目录
 	logDir := "./run_log/"
 	err := os.MkdirAll(logDir, os.ModePerm)

@@ -1,8 +1,10 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"ginFrame/config"
+	"github.com/rs/zerolog"
 	"testing"
 )
 
@@ -62,11 +64,56 @@ func TestRound(t *testing.T) {
 	fmt.Println(Round(1.5))
 }
 
-func TestDD(t *testing.T) {
+func TestSleep(t *testing.T) {
+	Sleep(1)
+}
+
+func TestUsleep(t *testing.T) {
+	Usleep(1000000)
+}
+
+func TestGetHostName(t *testing.T) {
+	fmt.Println(GetHostName())
+}
+
+func TestGetOS(t *testing.T) {
+	fmt.Println(GetOS())
+}
+
+func TestGetArch(t *testing.T) {
+	fmt.Println(GetArch())
+}
+
+func TestGetArchBit(t *testing.T) {
+	fmt.Println(GetArchBit())
+}
+
+func TestGetCpuCores(t *testing.T) {
+	fmt.Println(GetCpuCores())
+}
+
+func TestLog(t *testing.T) {
 	config.InitLog()
 
 	log := config.Log
 
 	log.Info().Str("foo", "bar").Msg("Hello World")
 	log.Error().Str("foo", "bar").Msg("Hello World")
+
+	log.Info().
+		Str("foo", "bar").
+		Dict("dict", zerolog.Dict().
+			Str("bar", "baz").
+			Int("n", 1),
+		).Msg("hello world")
+
+	err := errors.New("A repo man spends his life getting into tense situations")
+
+	fmt.Println(err)
+	service := "myservice"
+
+	log.Fatal().
+		Err(err).
+		Str("service", service).
+		Msgf("Cannot start %s", service)
 }
