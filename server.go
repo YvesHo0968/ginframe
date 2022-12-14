@@ -1,13 +1,19 @@
 package ginFrame
 
 import (
-	"fmt"
 	"ginFrame/config"
 	"ginFrame/route"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/sync/errgroup"
+	"net/http"
+	"time"
 )
 
-var GServer *Server
+var (
+	g       errgroup.Group
+	GServer *Server
+)
 
 type Server struct {
 	GinServer *gin.Engine
@@ -42,11 +48,11 @@ func New() {
 	// 设置路由
 	route.SetRoute(GServer.GinServer)
 
-	ee := config.Rdb.Set("qwqww12121", "value", 0).Err()
-
-	if ee != nil {
-		fmt.Println("错误")
-	}
+	//ee := config.Rdb.Set(config.RdbCtx, "qwqww12121", "value", time.Minute*2).Err()
+	//
+	//if ee != nil {
+	//	fmt.Println("错误")
+	//}
 
 	//fmt.Println(dd)
 
@@ -61,25 +67,44 @@ func New() {
 	//}
 	//fmt.Println("key", val)
 
-	GServer.GinServer.Run(":8080") // listen and serve on 0.0.0.0:8080
+	// 单端口启动
+	//GServer.GinServer.Run(":8080") // listen and serve on 0.0.0.0:8080
+
 	//GServer.GinServer.RunListener()
 
-	//server01 := &http.Server{
-	//	Addr:         ":8080",
-	//	Handler:      GServer.GinServer,
-	//	ReadTimeout:  5 * time.Second,
-	//	WriteTimeout: 10 * time.Second,
-	//}
-	//
-	//server02 := &http.Server{
-	//	Addr:         ":8081",
-	//	Handler:      GServer.GinServer,
-	//	ReadTimeout:  5 * time.Second,
-	//	WriteTimeout: 10 * time.Second,
-	//}
-	//
-	//server01.ListenAndServe()
-	//server02.ListenAndServe()
+	server01 := &http.Server{
+		Addr:         ":8080",
+		Handler:      GServer.GinServer,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	server02 := &http.Server{
+		Addr:         ":8081",
+		Handler:      GServer.GinServer,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	g.Go(func() error {
+		err := server01.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			log.Print(err)
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		err := server02.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			log.Print(err)
+		}
+		return err
+	})
+
+	if err := g.Wait(); err != nil {
+		log.Print(err)
+	}
 
 	return
 }

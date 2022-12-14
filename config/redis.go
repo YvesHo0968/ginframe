@@ -1,8 +1,9 @@
 package config
 
 import (
+	"context"
 	"fmt"
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	"net"
 	"runtime"
 	"time"
@@ -65,20 +66,27 @@ func InitRedis() {
 		MaxRetryBackoff: 512 * time.Millisecond, //每次计算重试间隔时间的上限，默认512毫秒，-1表示取消间隔
 
 		//可自定义连接函数
-		Dialer: func() (net.Conn, error) {
+		Dialer: func(ctx context.Context, network string, addr string) (net.Conn, error) {
 			netDialer := &net.Dialer{
 				Timeout:   5 * time.Second,
 				KeepAlive: 5 * time.Minute,
 			}
-			return netDialer.Dial("tcp", "127.0.0.1:6379")
+			return netDialer.Dial(network, addr)
 		},
 
 		//钩子函数
-		OnConnect: func(conn *redis.Conn) error { //仅当客户端执行命令时需要从连接池获取连接时，如果连接池需要新建连接时则会调用此钩子函数
+		OnConnect: func(ctx context.Context, conn *redis.Conn) error { //仅当客户端执行命令时需要从连接池获取连接时，如果连接池需要新建连接时则会调用此钩子函数
 			fmt.Printf("conn=%v\n", conn)
 			return nil
 		},
 	})
+
+	pong, err := Rdb.Ping(RdbCtx).Result()
+	if err != nil {
+		fmt.Printf("连接redis出错，错误信息：%v", err)
+	}
+	fmt.Println("成功连接redis")
+	fmt.Println(pong)
 	//defer GClient.Close()
 
 	//err := GClient.Set("key1111", "value", 0).Err()
@@ -88,6 +96,22 @@ func InitRedis() {
 
 	printRedisOption(Rdb.Options())
 	printRedisPool(Rdb.PoolStats())
+
+	//设置一分钟的有效期
+	//Rdb.Expire(RdbCtx, "key", time.Minute)
+
+	ee := Rdb.Set(RdbCtx, "qwqww12121", "value", time.Minute*2).Err()
+
+	if ee != nil {
+		fmt.Println("错误")
+	}
+
+	//获取剩余有效期,单位:秒(s)
+	ttl, err := Rdb.TTL(RdbCtx, "qwqww12121").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(ttl)
 
 	//Rdb.Set("key121212", "value", 0).Err()
 

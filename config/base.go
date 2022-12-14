@@ -1,13 +1,16 @@
 package config
 
 import (
-	"github.com/go-redis/redis"
+	"context"
+	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 )
 
 // Rdb redis连接
 var Rdb *redis.Client
+
+var RdbCtx = context.Background()
 
 // Db  数据库
 var Db *gorm.DB
