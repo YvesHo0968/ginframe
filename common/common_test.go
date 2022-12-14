@@ -194,3 +194,11 @@ func TestUnSerialize(t *testing.T) {
 	m := out.(map[string]interface{})
 	fmt.Println(m["php"])
 }
+
+func TestUrlEncode(t *testing.T) {
+	fmt.Println(UrlEncode("中国"))
+}
+
+func TestUrlDecode(t *testing.T) {
+	fmt.Println(UrlDecode("%E4%B8%AD%E5%9B%BD"))
+}

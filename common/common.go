@@ -15,6 +15,7 @@ import (
 	"math"
 	r "math/rand"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"regexp"
@@ -364,4 +365,18 @@ func Serialize(data interface{}) string {
 // UnSerialize 字符转结构体
 func UnSerialize(str string) (interface{}, error) {
 	return serialize.UnMarshal([]byte(str))
+}
+
+// UrlEncode url序列化
+func UrlEncode(str string) string {
+	return url.QueryEscape(str)
+}
+
+// UrlDecode url反序列化
+func UrlDecode(str string) string {
+	decodeStr, err := url.QueryUnescape(str)
+	if err != nil {
+		return ""
+	}
+	return decodeStr
 }
