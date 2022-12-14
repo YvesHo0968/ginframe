@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"ginFrame/config"
 	"github.com/rs/zerolog"
+	"os"
+	"strings"
 	"testing"
+	"time"
 )
 
 func TestSha1(t *testing.T) {
@@ -116,6 +119,28 @@ func TestLog(t *testing.T) {
 		Err(err).
 		Str("service", service).
 		Msgf("Cannot start %s", service)
+}
+
+func TestLogDemo(t *testing.T) {
+	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, NoColor: false, TimeFormat: time.Stamp}
+	consoleWriter.FormatLevel = func(i interface{}) string {
+		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
+	}
+	consoleWriter.FormatMessage = func(i interface{}) string {
+		return fmt.Sprintf("%s", i)
+	}
+	consoleWriter.FormatFieldName = func(i interface{}) string {
+		return fmt.Sprintf("%s:", i)
+	}
+	consoleWriter.FormatFieldValue = func(i interface{}) string {
+		return fmt.Sprintf("%s;", i)
+	}
+
+	multi := zerolog.MultiLevelWriter(consoleWriter)
+	Logg := zerolog.New(multi).With().Timestamp().Caller().Logger().Level(zerolog.DebugLevel)
+
+	Logg.Printf("ddddd")
+	Logg.Info().Str("foo", "bar").Msg("Hello World")
 }
 
 func TestStructToJson(t *testing.T) {

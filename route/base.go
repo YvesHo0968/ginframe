@@ -1,10 +1,12 @@
 package route
 
 import (
+	"fmt"
 	"ginFrame/common"
 	"ginFrame/controller"
 	"ginFrame/middleware"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -71,6 +73,25 @@ func SetRoute(r *gin.Engine) {
 	r.GET("/redirect", func(context *gin.Context) {
 		// 重定向 301 http.StatusMovedPermanently
 		context.Redirect(http.StatusMovedPermanently, "https://www.bilibili.com")
+	})
+
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
+	r.POST("/upload", func(c *gin.Context) {
+		// Multipart form
+		form, _ := c.MultipartForm()
+		files := form.File["upload[]"]
+
+		for _, file := range files {
+			log.Println(file.Filename)
+
+			// Upload the file to specific dst.
+			err := c.SaveUploadedFile(file, fmt.Sprintf("./static/%s", file.Filename))
+
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
 	})
 
 	//r.POST("/somePost", posting)
