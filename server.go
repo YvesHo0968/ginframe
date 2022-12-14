@@ -1,6 +1,7 @@
 package ginFrame
 
 import (
+	"fmt"
 	"ginFrame/config"
 	"ginFrame/route"
 	"github.com/gin-gonic/gin"
@@ -72,39 +73,34 @@ func New() {
 
 	//GServer.GinServer.RunListener()
 
-	server01 := &http.Server{
-		Addr:         ":8080",
-		Handler:      GServer.GinServer,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+	ports := []int{8080, 8081, 9000, 9001} // 监听端口
+	serverIp := ""                         // 监听ip
+
+	var servers []*http.Server
+
+	for k, v := range ports {
+		servers = append(servers, &http.Server{
+			Addr:         fmt.Sprintf("%s:%d", serverIp, v),
+			Handler:      GServer.GinServer,
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 10 * time.Second,
+		})
+
+		gServer := servers[k]
+
+		g.Go(func() error {
+			err := gServer.ListenAndServe()
+			if err != nil && err != http.ErrServerClosed {
+				log.Print(err)
+			}
+			return err
+		})
+
+		fmt.Printf("Listen port %s:%d\r\n", serverIp, v)
 	}
-
-	server02 := &http.Server{
-		Addr:         ":8081",
-		Handler:      GServer.GinServer,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
-
-	g.Go(func() error {
-		err := server01.ListenAndServe()
-		if err != nil && err != http.ErrServerClosed {
-			log.Print(err)
-		}
-		return err
-	})
-
-	g.Go(func() error {
-		err := server02.ListenAndServe()
-		if err != nil && err != http.ErrServerClosed {
-			log.Print(err)
-		}
-		return err
-	})
 
 	if err := g.Wait(); err != nil {
 		log.Print(err)
 	}
 
-	return
 }
