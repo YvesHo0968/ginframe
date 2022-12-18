@@ -317,7 +317,7 @@ func GetHostName() string {
 	return name
 }
 
-// GetOS 获取主机名
+// GetOS 获取系统
 func GetOS() string {
 	return runtime.GOOS
 }

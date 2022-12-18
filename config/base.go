@@ -17,3 +17,6 @@ var Db *gorm.DB
 
 // Log 日志
 var Log zerolog.Logger
+
+// Flag flag
+var Flag FlagConfig

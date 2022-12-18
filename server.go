@@ -21,6 +21,9 @@ type Server struct {
 }
 
 func New() {
+	// Flag
+	config.InitFlag()
+
 	// 启动redis
 	config.InitRedis()
 
