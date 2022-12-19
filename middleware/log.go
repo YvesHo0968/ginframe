@@ -33,6 +33,8 @@ func Logger() gin.HandlerFunc {
 			Str("clientIP", clientIP).
 			Str("reqMethod", reqMethod).
 			Str("reqUri", reqUri).
+			Str("proto", c.Request.Proto).
+			Str("userAgent", c.Request.UserAgent()).
 			Msg("request")
 	}
 }

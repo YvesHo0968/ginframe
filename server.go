@@ -21,19 +21,7 @@ type Server struct {
 }
 
 func New() {
-	// Flag
-	config.InitFlag()
-
-	// 启动redis
-	config.InitRedis()
-
-	// 启动数据库
-	config.InitDb()
-
-	// 启动日志
-	config.InitLog()
-
-	config.Log.Info().Msg("config ini")
+	config.Init()
 
 	// 设置全局环境
 	gin.SetMode(gin.DebugMode)

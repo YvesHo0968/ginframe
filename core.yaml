@@ -1,0 +1,13 @@
+cc: asd 234
+name: wohuewwe
+peer:
+    abcd: 3322d
+statetransfer:
+    blocksperrequest: 20
+    maxdeltas: 200
+    recoverdamage: true
+    timeout:
+        fullstate: 600s
+        singleblock: 2s
+        singlestatedelta: 2s
+time: 1671438984
