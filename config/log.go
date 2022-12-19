@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/rs/zerolog"
+	"github.com/spf13/viper"
 	"os"
 	"strings"
 	"time"
@@ -41,7 +42,14 @@ func InitLog() {
 		return fmt.Sprintf("%s;", i)
 	}
 	multi := zerolog.MultiLevelWriter(consoleWriter, logFile)
-	Log = zerolog.New(multi).With().Timestamp().Caller().Logger().Level(zerolog.InfoLevel)
+
+	level, _ := zerolog.ParseLevel(viper.GetString("log.level"))
+
+	if viper.GetBool("app_debug") {
+		Log = zerolog.New(multi).With().Timestamp().Caller().Logger().Level(level)
+	} else {
+		Log = zerolog.New(multi).With().Timestamp().Logger().Level(level)
+	}
 
 	// 日志采样 每隔多少条输出一次
 	//Log = Log.Sample(&zerolog.BasicSampler{N: 10})

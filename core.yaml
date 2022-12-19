@@ -1,4 +1,7 @@
-cc: asd 234
+app_debug: true
+
+log:
+    level: debug # 日志等级 trace debug info warn error fatal panic
 name: wohuewwe
 peer:
     abcd: 3322d

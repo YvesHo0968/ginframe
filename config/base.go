@@ -2,10 +2,8 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
-	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
 
@@ -40,6 +38,4 @@ func Init() {
 	InitLog()
 
 	Log.Debug().Msg("config ini")
-
-	fmt.Println(viper.AllSettings())
 }
