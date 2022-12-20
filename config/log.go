@@ -1,9 +1,9 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/rs/zerolog"
-	"github.com/spf13/viper"
 	"os"
 	"strings"
 	"time"
@@ -20,7 +20,7 @@ func InitLog() {
 
 	// 创建log目录
 	logDir := "./run_log/"
-	err := os.MkdirAll(logDir, os.ModePerm)
+	err := os.MkdirAll(logDir, os.ModePerm) // 创建多级目录
 	if err != nil {
 		fmt.Println("Mkdir failed, err:", err)
 		return
@@ -28,7 +28,37 @@ func InitLog() {
 
 	fileName := logDir + time.Now().Format("2006-01-02") + ".log"
 	logFile, _ := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, NoColor: false, TimeFormat: time.Stamp}
+	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true, TimeFormat: timeFormat}
+	consoleWriter.FormatTimestamp = func(i interface{}) string {
+		t := "<nil>"
+		switch tt := i.(type) {
+		case string:
+			ts, err := time.Parse(zerolog.TimeFieldFormat, tt)
+			if err != nil {
+				t = tt
+			} else {
+				t = ts.Format(consoleWriter.TimeFormat)
+			}
+		case json.Number:
+			i, err := tt.Int64()
+			if err != nil {
+				t = tt.String()
+			} else {
+				var sec, nsec int64 = i, 0
+				switch zerolog.TimeFieldFormat {
+				case zerolog.TimeFormatUnixMs:
+					nsec = int64(time.Duration(i) * time.Millisecond)
+					sec = 0
+				case zerolog.TimeFormatUnixMicro:
+					nsec = int64(time.Duration(i) * time.Microsecond)
+					sec = 0
+				}
+				ts := time.Unix(sec, nsec)
+				t = ts.Format(consoleWriter.TimeFormat)
+			}
+		}
+		return fmt.Sprintf("%s", t)
+	}
 	consoleWriter.FormatLevel = func(i interface{}) string {
 		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
 	}
@@ -43,13 +73,15 @@ func InitLog() {
 	}
 	multi := zerolog.MultiLevelWriter(consoleWriter, logFile)
 
-	level, _ := zerolog.ParseLevel(viper.GetString("log.level"))
+	level, _ := zerolog.ParseLevel(Viper.Log.Level) // 日志等级转换
 
-	if viper.GetBool("app_debug") {
-		Log = zerolog.New(multi).With().Timestamp().Caller().Logger().Level(level)
-	} else {
-		Log = zerolog.New(multi).With().Timestamp().Logger().Level(level)
+	logContext := zerolog.New(multi).With().Timestamp()
+
+	if Viper.AppDebug {
+		logContext = logContext.Caller()
 	}
+
+	Log = logContext.Logger().Level(level)
 
 	// 日志采样 每隔多少条输出一次
 	//Log = Log.Sample(&zerolog.BasicSampler{N: 10})

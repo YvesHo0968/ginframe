@@ -1,0 +1,20 @@
+app_debug: false
+
+# 监听ip
+server_ip: 127.0.0.1
+
+ports: # 监听端口
+    - 8080
+    - 8081
+    - 9000
+    - 9001
+
+# 日志
+log:
+    level: debug # 日志等级 trace debug info warn error fatal panic
+
+redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    select: 1

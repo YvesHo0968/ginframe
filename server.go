@@ -21,10 +21,16 @@ type Server struct {
 }
 
 func New() {
+	// 初始化配置
 	config.Init()
 
-	// 设置全局环境
-	gin.SetMode(gin.DebugMode)
+	if config.Viper.AppDebug {
+		// 设置全局环境
+		gin.SetMode(gin.DebugMode)
+	} else {
+		// 设置全局环境
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	// 禁用控制台颜色
 	//gin.DisableConsoleColor()
@@ -64,8 +70,8 @@ func New() {
 
 	//GServer.GinServer.RunListener()
 
-	ports := []int{8080, 8081, 9000, 9001} // 监听端口
-	serverIp := ""                         // 监听ip
+	ports := config.Viper.Ports       // 监听端口
+	serverIp := config.Viper.ServerIp // 监听ip
 
 	var servers []*http.Server
 

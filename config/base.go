@@ -21,6 +21,9 @@ var Log zerolog.Logger
 // Flag flag
 var Flag FlagConfig
 
+// Viper 配置数据
+var Viper viperConfig
+
 func Init() {
 	// Flag
 	InitFlag()
@@ -28,14 +31,14 @@ func Init() {
 	// 配置文件
 	InitConfigFile()
 
+	// 启动日志
+	InitLog()
+
 	// 启动redis
 	InitRedis()
 
 	// 启动数据库
 	InitDb()
-
-	// 启动日志
-	InitLog()
 
 	Log.Debug().Msg("config ini")
 }

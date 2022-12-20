@@ -85,8 +85,11 @@ func InitRedis() {
 	if err != nil {
 		fmt.Printf("连接redis出错，错误信息：%v", err)
 	}
-	fmt.Println("成功连接redis")
-	fmt.Println(pong)
+
+	Log.Error().Str("ping", pong).Msg("redis success")
+	//panic("sddd")
+
+	Log.Info().Str("ping", pong).Msg("redis success")
 	//defer GClient.Close()
 
 	//err := GClient.Set("key1111", "value", 0).Err()
@@ -94,24 +97,24 @@ func InitRedis() {
 	//	panic(err)
 	//}
 
-	printRedisOption(Rdb.Options())
-	printRedisPool(Rdb.PoolStats())
+	//printRedisOption(Rdb.Options())
+	//printRedisPool(Rdb.PoolStats())
 
 	//设置一分钟的有效期
 	//Rdb.Expire(RdbCtx, "key", time.Minute)
 
-	ee := Rdb.Set(RdbCtx, "qwqww12121", "value", time.Minute*2).Err()
-
-	if ee != nil {
-		fmt.Println("错误")
-	}
-
-	//获取剩余有效期,单位:秒(s)
-	ttl, err := Rdb.TTL(RdbCtx, "qwqww12121").Result()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(ttl)
+	//ee := Rdb.Set(RdbCtx, "qwqww12121", "value", time.Minute*2).Err()
+	//
+	//if ee != nil {
+	//	fmt.Println("错误")
+	//}
+	//
+	////获取剩余有效期,单位:秒(s)
+	//ttl, err := Rdb.TTL(RdbCtx, "qwqww12121").Result()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println(ttl)
 
 	//Rdb.Set("key121212", "value", 0).Err()
 
