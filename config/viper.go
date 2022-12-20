@@ -8,12 +8,30 @@ import (
 )
 
 type viperConfig struct {
-	AppDebug bool
-	ServerIp string
-	Ports    []int
-	Log      struct {
-		Level string
-	}
+	AppDebug bool `mapstructure:"app_debug"`
+
+	ServerIp string `mapstructure:"server_ip"`
+
+	Ports []int `mapstructure:"ports"`
+
+	Log struct {
+		Level string `mapstructure:"level"`
+	} `mapstructure:"log"`
+
+	Redis struct {
+		Host     string `mapstructure:"host"`
+		Port     int    `mapstructure:"port"`
+		Password string `mapstructure:"password"`
+		Db       int    `mapstructure:"db"`
+	} `mapstructure:"redis"`
+
+	Mysql struct {
+		Hostname string `mapstructure:"hostname"`
+		Database string `mapstructure:"database"`
+		Username string `mapstructure:"username"`
+		Password string `mapstructure:"password"`
+		Port     int    `mapstructure:"port"`
+	} `mapstructure:"mysql"`
 }
 
 func InitConfigFile() {
@@ -25,7 +43,7 @@ func InitConfigFile() {
 	viper.AutomaticEnv() // 读入匹配的环境变量
 	viper.SetEnvKeyReplacer(replacer)
 
-	viper.SetConfigType("yaml")   // 支持的扩展名有 "json", "toml", "yaml", "yml", "properties", "props", "prop", "env", "dotenv"
+	viper.SetConfigType("yaml")   // 支持的扩展名有 "json", "toml", "yaml", "yml", "properties", "props", "prop", "hcl", "tfvars", "dotenv", "env", "ini"
 	viper.SetConfigName("config") // 配置文件名字，注意没有扩展名
 	viper.AddConfigPath("./")     // 配置文件的路径
 
@@ -35,12 +53,18 @@ func InitConfigFile() {
 		os.Exit(1)
 	}
 
-	Viper.AppDebug = viper.GetBool("app_debug")
-	Viper.ServerIp = viper.GetString("server_ip")
-	Viper.Ports = viper.GetIntSlice("ports")
-	Viper.Log.Level = viper.GetString("log.level")
+	viper.Unmarshal(&Viper)
 
-	fmt.Println("----------------", viper.GetString("redis.password"))
+	fmt.Println(Viper)
+
+	//os.Exit(1)
+
+	//Viper.AppDebug = viper.GetBool("app_debug")
+	//Viper.ServerIp = viper.GetString("server_ip")
+	//Viper.Ports = viper.GetIntSlice("ports")
+	//Viper.Log.Level = viper.GetString("log.level")
+
+	//fmt.Println("----------------", viper.GetString("redis.password"))
 
 	//fmt.Println("viper.AllSettings", viper.AllSettings())
 	//fmt.Println("app_debug", viper.GetString("server_ip"))

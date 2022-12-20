@@ -38,12 +38,13 @@ func InitRedis() {
 	num := runtime.NumCPU()
 	fmt.Println("cpu num = ", 4*num)
 
+	redisAddr := fmt.Sprintf("%s:%d", Viper.Redis.Host, Viper.Redis.Port)
 	Rdb = redis.NewClient(&redis.Options{
 		//连接信息
-		Network:  "tcp",            //网络类型，tcp or unix，默认tcp
-		Addr:     "127.0.0.1:6379", //主机名+冒号+端口，默认localhost:6379
-		Password: "",               //密码
-		DB:       4,                // redis数据库index
+		Network:  "tcp",                //网络类型，tcp or unix，默认tcp
+		Addr:     redisAddr,            //主机名+冒号+端口，默认localhost:6379
+		Password: Viper.Redis.Password, //密码
+		DB:       Viper.Redis.Db,       // redis数据库index
 
 		//连接池容量及闲置连接数量
 		PoolSize:     4 * runtime.NumCPU(), // 连接池最大socket连接数，默认为4倍CPU数， 4 * runtime.NumCPU

@@ -13,8 +13,17 @@ ports: # 监听端口
 log:
     level: debug # 日志等级 trace debug info warn error fatal panic
 
+# redis 配置
 redis:
     host: 127.0.0.1
     port: 6379
     password:
-    select: 1
+    db: 1
+
+# mysql 配置
+mysql:
+    hostname: 127.0.0.1
+    database: kuyo_logic_server_acc
+    username: root
+    password: root
+    port: 3306
