@@ -59,7 +59,7 @@ func SetRoute(r *gin.Engine) {
 
 	r.GET("/ping", func(c *gin.Context) {
 		//c.AbortWithError(200, errors.New("this is error"))
-		c.AbortWithStatusJSON(200, []string{})
+		//c.AbortWithStatusJSON(200, []string{})
 		//c.Error(errors.New("this is error"))
 		//errors.New("this is error")
 
