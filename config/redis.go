@@ -35,9 +35,6 @@ func printRedisOption(opt *redis.Options) {
 }
 
 func InitRedis() {
-	num := runtime.NumCPU()
-	fmt.Println("cpu num = ", 4*num)
-
 	redisAddr := fmt.Sprintf("%s:%d", Viper.Redis.Host, Viper.Redis.Port)
 	Rdb = redis.NewClient(&redis.Options{
 		//连接信息
@@ -86,9 +83,6 @@ func InitRedis() {
 	if err != nil {
 		fmt.Printf("连接redis出错，错误信息：%v", err)
 	}
-
-	Log.Error().Str("ping", pong).Msg("redis success")
-	//panic("sddd")
 
 	Log.Info().Str("ping", pong).Msg("redis success")
 	//defer GClient.Close()

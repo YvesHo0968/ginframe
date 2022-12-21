@@ -34,7 +34,7 @@ func Logger() gin.HandlerFunc {
 			Str("reqMethod", reqMethod).
 			Str("reqUri", reqUri).
 			Str("proto", c.Request.Proto).
-			Str("userAgent", c.Request.UserAgent()).
+			//Str("userAgent", c.Request.UserAgent()).
 			Msg("request")
 	}
 }

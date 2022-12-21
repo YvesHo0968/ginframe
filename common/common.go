@@ -25,21 +25,27 @@ import (
 	"time"
 )
 
+type returnData struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+
 // Success gin框架返回成功
 func Success(c *gin.Context, data interface{}) {
-	type SuccessData struct {
-		Code int         `json:"code"`
-		Msg  string      `json:"msg"`
-		Data interface{} `json:"data"`
-	}
-
-	d := SuccessData{
-		Code: 200,
+	c.JSON(http.StatusOK, returnData{
+		Code: http.StatusOK,
 		Msg:  "成功",
 		Data: data,
-	}
+	})
+}
 
-	c.JSON(http.StatusOK, d)
+func ServerError(c *gin.Context, code int, msg string) {
+	c.JSON(code, returnData{
+		Code: code,
+		Msg:  msg,
+		Data: []string{},
+	})
 }
 
 // Uuid 获取uuid
@@ -334,7 +340,12 @@ func GetArchBit() int {
 
 // GetCpuCores 获取cpu数
 func GetCpuCores() int {
-	return runtime.GOMAXPROCS(0)
+	return runtime.NumCPU()
+}
+
+// SetGoMaxProcs 设置最大进程数
+func SetGoMaxProcs(n int) int {
+	return runtime.GOMAXPROCS(n)
 }
 
 // JsonEncode 结构体转json

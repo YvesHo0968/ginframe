@@ -11,6 +11,10 @@ import (
 )
 
 func SetRoute(r *gin.Engine) {
+	//r.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
+	//	c.String(200, "好像有点小毛病")
+	//}))
+
 	//r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 	//
 	//	// 你的自定义格式
@@ -26,7 +30,6 @@ func SetRoute(r *gin.Engine) {
 	//		param.ErrorMessage,
 	//	)
 	//}))
-	//r.Use(gin.Recovery())
 
 	// 使用 Logger 中间件
 	//r.Use(gin.Logger())
@@ -51,7 +54,21 @@ func SetRoute(r *gin.Engine) {
 	// 日志
 	r.Use(middleware.Logger())
 
+	// 捕捉异常
+	r.Use(middleware.HandlerException())
+
 	r.GET("/ping", func(c *gin.Context) {
+		//c.AbortWithError(200, errors.New("this is error"))
+		c.AbortWithStatusJSON(200, []string{})
+		//c.Error(errors.New("this is error"))
+		//errors.New("this is error")
+
+		//c.AbortWithError(404, errors.New("this is error"))
+		// 无意抛出 panic
+		//var slice = []int{1, 2, 3, 4, 5}
+		//slice[6] = 6
+
+		//panic("ddd")
 		c.JSON(200, gin.H{
 			"22":      common.FilePath(),
 			"message": "pong",

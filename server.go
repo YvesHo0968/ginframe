@@ -33,7 +33,7 @@ func New() {
 	}
 
 	// 禁用控制台颜色
-	//gin.DisableConsoleColor()
+	gin.DisableConsoleColor()
 	// 创建记录日志的文件
 	//f, _ := os.Create("gin.log")
 	//f, _ := os.OpenFile("./gin.log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
