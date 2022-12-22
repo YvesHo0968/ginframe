@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"ginFrame/config"
 	"github.com/rs/zerolog"
+	"golang.org/x/text/encoding/simplifiedchinese"
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 	"time"
@@ -93,6 +95,10 @@ func TestGetArchBit(t *testing.T) {
 
 func TestGetCpuCores(t *testing.T) {
 	fmt.Println(GetCpuCores())
+}
+
+func TestSetGoMaxProcs(t *testing.T) {
+	fmt.Println(SetGoMaxProcs(0))
 }
 
 func TestLog(t *testing.T) {
@@ -209,4 +215,16 @@ func TestSonyFlakeId(t *testing.T) {
 
 func TestSnowflakeId(t *testing.T) {
 	fmt.Println(SnowflakeId())
+}
+
+func TestName(t *testing.T) {
+	cmd := exec.Command("ls", "-lah")
+	//cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	r, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	r, _ = simplifiedchinese.GBK.NewDecoder().Bytes(r)
+	fmt.Println(string(r))
 }

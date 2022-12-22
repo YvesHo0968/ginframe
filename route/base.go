@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"time"
 )
 
 func SetRoute(r *gin.Engine) {
@@ -34,8 +35,8 @@ func SetRoute(r *gin.Engine) {
 	// 使用 Logger 中间件
 	//r.Use(gin.Logger())
 
-	// 使用 Recovery 中间件
-	r.Use(gin.Recovery())
+	// 设置Recovery中间件，主要用于拦截paic错误，不至于导致进程崩掉
+	//r.Use(gin.Recovery())
 	//r.Use(favicon.New("./favicon.ico"))
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 
@@ -58,16 +59,18 @@ func SetRoute(r *gin.Engine) {
 	r.Use(middleware.HandlerException())
 
 	r.GET("/ping", func(c *gin.Context) {
+
 		//c.AbortWithError(200, errors.New("this is error"))
 		//c.AbortWithStatusJSON(200, []string{})
-		//c.Error(errors.New("this is error"))
+		//c.Error(errors.New("this is error1"))
+		//c.Error(errors.New("this is error2"))
 		//errors.New("this is error")
 
 		//c.AbortWithError(404, errors.New("this is error"))
 		// 无意抛出 panic
 		//var slice = []int{1, 2, 3, 4, 5}
 		//slice[6] = 6
-
+		time.Sleep(3 * time.Second)
 		//panic("ddd")
 		c.JSON(200, gin.H{
 			"22":      common.FilePath(),

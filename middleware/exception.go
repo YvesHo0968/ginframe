@@ -20,10 +20,11 @@ func HandlerException() gin.HandlerFunc {
 
 		c.Next()
 
-		errorToPrint := c.Errors.Last()
-		if errorToPrint != nil {
-			config.Log.Error().Interface("Errors", errorToPrint).Msg("Handler Errors")
-			return
+		// 处理逻辑收集的一般错误，不影响程序执行
+		if length := len(c.Errors); length > 0 {
+			for _, v := range c.Errors {
+				config.Log.Warn().Interface("Errors", v).Msg("Handler Api Errors")
+			}
 		}
 	}
 }

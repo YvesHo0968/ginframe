@@ -1,13 +1,18 @@
 package ginFrame
 
 import (
+	"context"
 	"fmt"
 	"ginFrame/config"
 	"ginFrame/route"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
+	"io"
 	"net/http"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 )
 
@@ -27,9 +32,11 @@ func New() {
 	if config.Viper.AppDebug {
 		// 设置全局环境
 		gin.SetMode(gin.DebugMode)
+		gin.DefaultWriter = os.Stdout // 开启控制台打印
 	} else {
 		// 设置全局环境
 		gin.SetMode(gin.ReleaseMode)
+		gin.DefaultWriter = io.Discard // 关闭控制台打印
 	}
 
 	// 禁用控制台颜色
@@ -79,25 +86,62 @@ func New() {
 		servers = append(servers, &http.Server{
 			Addr:         fmt.Sprintf("%s:%d", serverIp, v),
 			Handler:      GServer.GinServer,
-			ReadTimeout:  5 * time.Second,
-			WriteTimeout: 10 * time.Second,
+			ReadTimeout:  60 * time.Second,
+			WriteTimeout: 60 * time.Second,
 		})
 
 		gServer := servers[k]
 
 		g.Go(func() error {
 			err := gServer.ListenAndServe()
+
 			if err != nil && err != http.ErrServerClosed {
-				log.Print(err)
+				fmt.Println(err.Error())
+				return err
 			}
-			return err
+
+			return nil
 		})
 
-		fmt.Printf("Listen port %s:%d\r\n", serverIp, v)
+		fmt.Printf("Listen Server %s:%d\r\n", serverIp, v)
 	}
 
-	if err := g.Wait(); err != nil {
-		log.Print(err)
-	}
+	go func() {
+		if err := g.Wait(); err != nil {
+			fmt.Println("Server Start Error", err)
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}()
 
+	// 等待中断信号，以优雅地关闭服务器
+	quit := make(chan os.Signal)
+	// 可以捕捉除了kill-9的所有中断信号
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	//<-quit
+	s := <-quit
+	close(quit)
+
+	// 接受到信号
+	fmt.Println("Signal Received", s.String())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	wg := sync.WaitGroup{}
+	for _, val := range servers {
+		wg.Add(1)
+		go func(val *http.Server) {
+			defer wg.Done()
+
+			if err := val.Shutdown(ctx); err != nil {
+				fmt.Println(val.Addr, "Shutdown Error...")
+			} else {
+				fmt.Println(val.Addr, "Shutdown Success...")
+			}
+		}(val)
+	}
+	wg.Wait()
+
+	fmt.Println("EXIT...")
 }
