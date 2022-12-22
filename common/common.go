@@ -394,26 +394,29 @@ func UrlDecode(str string) string {
 	return decodeStr
 }
 
+var sonyFlakeData = sonyflake.NewSonyflake(sonyflake.Settings{})
+
 // SonyFlakeId 雪花分布式id
 func SonyFlakeId() int {
 	//t, _ := time.Parse("2006-01-02", "2021-01-01")
-	settings := sonyflake.Settings{
-		//StartTime:      t,              // 起始时间，默认值为2014-09-01 00:00:00 +0000 UTC
-		//MachineID:      getMachineID,   // 是一个返回实例 ID 的函数，如果不定义此函外，默认用本机ip 的低16位
-		//CheckMachineID: checkMachineID, // 验证实例 ID / 计算机ID 的唯一性，返回true时才创建
-	}
+	//settings := sonyflake.Settings{
+	//	//StartTime:      t,              // 起始时间，默认值为2014-09-01 00:00:00 +0000 UTC
+	//	//MachineID:      getMachineID,   // 是一个返回实例 ID 的函数，如果不定义此函外，默认用本机ip 的低16位
+	//	//CheckMachineID: checkMachineID, // 验证实例 ID / 计算机ID 的唯一性，返回true时才创建
+	//}
 
-	sf := sonyflake.NewSonyflake(settings)
+	//sf := sonyflake.NewSonyflake(settings)
 
-	id, _ := sf.NextID()
+	id, _ := sonyFlakeData.NextID()
 
 	return int(id)
 }
 
-func SnowflakeId() int {
-	node, _ := snowflake.NewNode(time.Now().UnixMilli() % 1024)
+var snowflakeData, _ = snowflake.NewNode(time.Now().UnixMilli() % 1024)
 
-	id := node.Generate()
+// SnowflakeId 推特雪花id
+func SnowflakeId() int {
+	id := snowflakeData.Generate()
 
 	return int(id)
 }

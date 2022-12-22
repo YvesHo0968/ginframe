@@ -211,9 +211,14 @@ func TestUrlDecode(t *testing.T) {
 
 func TestSonyFlakeId(t *testing.T) {
 	fmt.Println(SonyFlakeId())
+	fmt.Println(SonyFlakeId())
+	fmt.Println(SonyFlakeId())
+	fmt.Println(SonyFlakeId())
 }
 
 func TestSnowflakeId(t *testing.T) {
+	fmt.Println(SnowflakeId())
+	fmt.Println(SnowflakeId())
 	fmt.Println(SnowflakeId())
 }
 
