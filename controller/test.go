@@ -48,8 +48,8 @@ func Test(c *gin.Context) {
 
 // LoginData 绑定为json
 type LoginData struct {
-	User     string `form:"user" json:"user" xml:"user"  binding:"required"`
-	Password string `form:"password" json:"password" xml:"password" binding:"required"`
+	User     string `form:"user" json:"user" uri:"user" xml:"user" header:"user" binding:"required"`
+	Password string `form:"password" json:"password" uri:"password" xml:"password" header:"password" binding:"required"`
 }
 
 func Login(c *gin.Context) {
