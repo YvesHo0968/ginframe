@@ -8,6 +8,7 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"os"
 	"os/exec"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -41,8 +42,16 @@ func TestStrToLower(t *testing.T) {
 	fmt.Println(StrToLower("Hello"))
 }
 
+func TestUcWords(t *testing.T) {
+	fmt.Println(UcWords("hello word"))
+}
+
+func TestUcFirst(t *testing.T) {
+	fmt.Println(UcFirst("hello word"))
+}
+
 func TestLcFirst(t *testing.T) {
-	fmt.Println(UcWords("hello soed"))
+	fmt.Println(LcFirst("Hello word"))
 }
 
 func TestMdStrLen(t *testing.T) {
@@ -220,6 +229,35 @@ func TestSnowflakeId(t *testing.T) {
 	fmt.Println(SnowflakeId())
 	fmt.Println(SnowflakeId())
 	fmt.Println(SnowflakeId())
+}
+
+func TestSendEmail(t *testing.T) {
+	s := SendEmailData{
+		FormName: "Go邮箱测试",
+		ToEmail:  []string{"11111@qq.com"},
+		Subject:  "测试第三方 email 库",
+		Text:     "",
+		HTML:     "<h1>HTML 正文</h1>",
+	}
+
+	c := SmtpConfig{
+		Username: "xxx@aliyun.com",
+		Password: "Password",
+		Host:     "smtpdm.aliyun.com",
+		Port:     465,
+		Tls:      true,
+	}
+	fmt.Println(SendEmail(s, c))
+}
+
+func TestImplode(t *testing.T) {
+	dd := reflect.TypeOf([]string{"hello", "word"})
+	fmt.Println(dd.String())
+	fmt.Println(Implode(",", []string{"hello", "word"}))
+}
+
+func TestExplode(t *testing.T) {
+	fmt.Println(Explode(",", "hello,word"))
 }
 
 func TestName(t *testing.T) {

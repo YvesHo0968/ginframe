@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"crypto/rand"
 	"crypto/sha1"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -11,12 +12,17 @@ import (
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jordan-wright/email"
 	"github.com/leeqvip/gophp/serialize"
 	"github.com/sony/sonyflake"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"io"
 	"math"
 	r "math/rand"
+	"mime"
 	"net/http"
+	"net/smtp"
 	"net/url"
 	"os"
 	"path"
@@ -25,6 +31,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 type returnData struct {
@@ -275,9 +282,27 @@ func StrToUpper(str string) string {
 	return strings.ToUpper(str)
 }
 
-// UcWords 单词首字母大写
+// UcWords 把每个单词的首字符转换为大写
 func UcWords(str string) string {
-	return strings.Title(str)
+	return cases.Title(language.Und, cases.NoLower).String(str)
+}
+
+// UcFirst 首字母大写
+func UcFirst(str string) string {
+	for _, v := range str {
+		u := string(unicode.ToUpper(v))
+		return u + str[len(u):]
+	}
+	return ""
+}
+
+// LcFirst 首字母小写
+func LcFirst(str string) string {
+	for _, v := range str {
+		u := string(unicode.ToLower(v))
+		return u + str[len(u):]
+	}
+	return ""
 }
 
 // MdStrLen 字符串长度
@@ -419,4 +444,76 @@ func SnowflakeId() int {
 	id := snowflakeData.Generate()
 
 	return int(id)
+}
+
+type SendEmailData struct {
+	FormName string
+	ToEmail  []string
+	Subject  string
+	Text     string
+	HTML     string
+}
+
+type SmtpConfig struct {
+	Username string
+	Password string
+	Host     string
+	Port     int
+	Tls      bool
+}
+
+// SendEmail 发送邮箱
+func SendEmail(s SendEmailData, c SmtpConfig) (bool, error) {
+	e := email.NewEmail()
+
+	smtpUsername := c.Username
+	smtpPassword := c.Password
+	smtpHost := c.Host
+	smtpPort := c.Port
+	smtpTls := c.Tls
+
+	from := fmt.Sprintf("%s <%s>", mime.QEncoding.Encode("UTF-8", s.FormName), smtpUsername)
+	e.From = from         //设置发件人；
+	e.To = s.ToEmail      // 设置发给谁，支持多人；
+	e.Subject = s.Subject // 指定邮件标题
+
+	if s.Text != "" {
+		e.Text = []byte(s.Text) // 指定普通文本邮件正文
+	}
+
+	if s.HTML != "" {
+		e.HTML = []byte(s.HTML) // 指定 HTML 格式邮件正文
+	}
+
+	//e.AttachFile("zap.log")
+
+	auth := smtp.PlainAuth("", smtpUsername, smtpPassword, smtpHost)
+
+	var err error
+
+	if smtpTls {
+		tlsConfig := &tls.Config{
+			InsecureSkipVerify: true,
+			ServerName:         smtpHost,
+		}
+		err = e.SendWithTLS(fmt.Sprintf("%s:%d", smtpHost, smtpPort), auth, tlsConfig)
+	} else {
+		err = e.Send(fmt.Sprintf("%s:%d", smtpHost, smtpPort), auth)
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, err
+}
+
+// Implode 数组转字符
+func Implode(sep string, elems []string) string {
+	return strings.Join(elems, sep)
+}
+
+// Explode 字符转数组
+func Explode(sep string, str string) []string {
+	return strings.Split(str, sep)
 }

@@ -27,3 +27,10 @@ mysql:
     username: root
     password: root
     port: 3306
+
+smtp:
+    username: xxx@aliyun.com
+    password: password
+    host: smtpdm.aliyun.com
+    port: 465,
+    tls: true

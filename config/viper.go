@@ -32,6 +32,14 @@ type viperConfig struct {
 		Password string `mapstructure:"password"`
 		Port     int    `mapstructure:"port"`
 	} `mapstructure:"mysql"`
+
+	Smtp struct {
+		Username string `mapstructure:"Username"`
+		Password string `mapstructure:"password"`
+		Host     string `mapstructure:"host"`
+		Port     int    `mapstructure:"port"`
+		Tls      bool   `mapstructure:"tls"`
+	} `mapstructure:"smtp"`
 }
 
 func InitConfigFile() {
