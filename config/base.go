@@ -26,7 +26,7 @@ var Viper viperConfig
 
 func Init() {
 	// Flag
-	InitFlag()
+	//InitFlag()
 
 	// 配置文件
 	InitConfigFile()

@@ -5,9 +5,7 @@ import (
 )
 
 type FlagConfig struct {
-	Path       *string
-	Ports      *[]int
-	ConfigType *string
+	Path string
 }
 
 //var (
@@ -17,8 +15,9 @@ type FlagConfig struct {
 //)
 
 func InitFlag() {
-	Flag.Path = flag.StringP("path", "p", "./", "config path")
-	Flag.Ports = flag.IntSlice("ports", []int{8081}, "ports")
-	Flag.ConfigType = flag.StringP("config_type", "t", "yaml", "config type")
+	flag.StringVarP(&Flag.Path, "path", "p", "./", "config path")
+	////fmt.Println("-------Flag.Path--------", *Flag.Path)
+	////Flag.Ports = pflag.IntSlice("ports", []int{8081}, "ports")
+	////Flag.ConfigType = pflag.StringP("config_type", "t", "yaml", "config type")
 	flag.Parse()
 }

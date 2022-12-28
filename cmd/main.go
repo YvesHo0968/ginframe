@@ -1,9 +1,8 @@
 package main
 
-import (
-	"ginFrame"
-)
+import "ginFrame/command"
 
 func main() {
-	ginFrame.New()
+	//ginFrame.New() // 直接启动
+	command.Init() // 通过命令行参数启动
 }

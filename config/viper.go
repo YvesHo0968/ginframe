@@ -51,9 +51,9 @@ func InitConfigFile() {
 	viper.AutomaticEnv() // 读入匹配的环境变量
 	viper.SetEnvKeyReplacer(replacer)
 
-	viper.SetConfigType("yaml")   // 支持的扩展名有 "json", "toml", "yaml", "yml", "properties", "props", "prop", "hcl", "tfvars", "dotenv", "env", "ini"
-	viper.SetConfigName("config") // 配置文件名字，注意没有扩展名
-	viper.AddConfigPath("./")     // 配置文件的路径
+	viper.SetConfigType("yaml")    // 支持的扩展名有 "json", "toml", "yaml", "yml", "properties", "props", "prop", "hcl", "tfvars", "dotenv", "env", "ini"
+	viper.SetConfigName("config")  // 配置文件名字，注意没有扩展名
+	viper.AddConfigPath(Flag.Path) // 配置文件的路径
 
 	err := viper.ReadInConfig() // 搜索路径，并读取配置数据
 	if err != nil {
@@ -63,7 +63,7 @@ func InitConfigFile() {
 
 	viper.Unmarshal(&Viper)
 
-	fmt.Println(Viper)
+	//fmt.Println(Viper)
 
 	//os.Exit(1)
 
