@@ -1,7 +1,7 @@
 NAME=ginframe
 BINDIR=build
 VERSION=$(shell git describe --tags || echo "unknown version")
-GOBUILD=CGO_ENABLED=0 go build --ldflags="-s -w" -v -x -a
+GOBUILD=CGO_ENABLED=0 go build --ldflags="-s -w -X 'ginFrame.Version=1.0.0' -X 'ginFrame.BuildTime=`date +"%Y-%m-%d %H:%M:%S"`' -X 'ginFrame.GoVersion=`go version`'" -v -x -a
 GOFILES=cmd/*.go
 
 PLATFORM_LIST = \
