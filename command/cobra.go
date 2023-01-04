@@ -30,7 +30,9 @@ func Init() {
 		Use:   "version",
 		Short: "Push an image or a repository from a registry",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("version: 12222")
+			fmt.Println("Version: ", ginFrame.Version)
+			fmt.Println("Go_version: ", ginFrame.GoVersion)
+			fmt.Println("Build_time: ", ginFrame.BuildTime)
 			os.Exit(0)
 		},
 	})

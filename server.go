@@ -16,10 +16,11 @@ import (
 	"time"
 )
 
-var (
-	g       errgroup.Group
-	GServer *Server
-)
+var g errgroup.Group
+var GServer *Server
+var Version string
+var GoVersion string
+var BuildTime string
 
 type Server struct {
 	GinServer *gin.Engine
