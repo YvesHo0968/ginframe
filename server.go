@@ -47,7 +47,7 @@ func New() {
 	//gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
 	GServer = &Server{
-		GinServer: gin.Default(),
+		GinServer: gin.New(),
 	}
 
 	// 设置路由

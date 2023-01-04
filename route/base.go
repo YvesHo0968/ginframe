@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"time"
 )
 
 func SetRoute(r *gin.Engine) {
@@ -52,6 +51,9 @@ func SetRoute(r *gin.Engine) {
 	// 跨域
 	r.Use(middleware.Cors())
 
+	// token令牌限流
+	r.Use(middleware.RateLimiter())
+
 	// 日志
 	r.Use(middleware.Logger())
 
@@ -70,7 +72,7 @@ func SetRoute(r *gin.Engine) {
 		// 无意抛出 panic
 		//var slice = []int{1, 2, 3, 4, 5}
 		//slice[6] = 6
-		time.Sleep(3 * time.Second)
+		//time.Sleep(3 * time.Second)
 		//panic("ddd")
 		c.JSON(200, gin.H{
 			"22":      common.FilePath(),
